@@ -45,7 +45,8 @@ vim.g.netrw_fastbrowse = 0
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 -- Lazy.nvim bootstrap
 if not vim.loop.fs_stat(lazypath) then
-  vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable", lazypath })
+  vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable",
+    lazypath })
 end
 vim.opt.rtp:prepend(vim.env.LAZY or lazypath)
 
@@ -542,7 +543,7 @@ local plugins = {
     },
   },
   -- IDE-LIKE BREADCRUMBS
-  { "Bekaboo/dropbar.nvim",     lazy = false },
+  { "Bekaboo/dropbar.nvim", lazy = false },
   {
     "ggandor/leap.nvim",
     lazy = false,
@@ -669,8 +670,29 @@ local plugins = {
       vim.keymap.set("n", "<leader>t4", function() term.gotoTerminal(4) end, { silent = true })
     end,
   },
-  { "nacro90/numb.nvim",        event = "VimEnter", config = function() require("numb").setup() end },
-  { "ethanholz/nvim-lastplace", event = "VimEnter", config = function() require("nvim-lastplace").setup {} end },
+  { "nacro90/numb.nvim",    event = "VimEnter", config = function() require("numb").setup() end },
+  {
+    "chrisgrieser/nvim-genghis",
+    dependencies = "stevearc/dressing.nvim",
+    event = { "BufReadPost", "BufNewFile" },
+    config = function()
+      vim.keymap.set("n", "<leader>fp", require("genghis").copyFilepath, { desc = "Yank kurrent filepath" })
+      vim.keymap.set("n", "<leader>fn", require("genghis").copyFilename, { desc = "Yank current filename" })
+      -- vim.keymap.set("<leader>cx", { require("genghis").chmodx, desc = "Make current file executable" },
+      vim.keymap.set("n", "<leader>fr", require("genghis").renameFile, { desc = "Rename current file" })
+      vim.keymap.set("n", "<leader>fm", require("genghis").moveAndRenameFile,
+        { desc = "Move and rename current filepath" })
+      vim.keymap.set("n", "<leader>fc", require("genghis").createNewFile, { desc = "Create new file" })
+      vim.keymap.set("n", "<leader>fd", require("genghis").duplicateFile, { desc = "Duplicate current file" })
+      vim.keymap.set("n", "<leader>ft", function() require("genghis").trashFile({ trashLocation = "$HOME/.Trash" }) end,
+        { desc = "Trash current file" })
+    end
+  },
+  {
+    "ethanholz/nvim-lastplace",
+    event = "VimEnter",
+    config = function() require("nvim-lastplace") .setup { } end,
+  },
   {
     "kylechui/nvim-surround",
     event = { "BufReadPost", "BufNewFile" },
@@ -684,7 +706,6 @@ local plugins = {
     keys = {
       -- TELESCOPE
       { "<leader>tf", "<cmd>Telescope find_files<CR>",  desc = "Buscar archivos" },
-      { "<leader>tg", "<cmd>Telescope git_files<CR>",   desc = "Archivos de Git" },
       { "<leader>tb", "<cmd>Telescope buffers<CR>",     desc = "Lista buffers" },
       { "<leader>tr", "<cmd>Telescope oldfiles<CR>",    desc = "Archivos recientes" },
       { "<leader>vh", "<cmd>Telescope help_tags<CR>",   desc = "Tags de ayuda" },
@@ -1188,13 +1209,16 @@ local plugins = {
       buffers = { follow_current_file = true, group_empty_dirs = true, show_unloaded = true },
     },
   },
-  { "folke/trouble.nvim", cmd = { "TroubleToggle", "Trouble" }, opts = { use_diagnostic_signs = true } },
+  { "folke/trouble.nvim",       cmd = { "TroubleToggle", "Trouble" }, opts = { use_diagnostic_signs = true } },
 }
 
 local opts = {
   defaults = { lazy = true, version = false },
   checker = { enabled = true },
-  performance = { cache = { enabled = true }, rtp = { disabled_plugins = { "man", "gzip", "tarPlugin", "tutor", "zipPlugin" } } },
+  performance = {
+    cache = { enabled = true },
+    rtp = { disabled_plugins = { "man", "gzip", "tarPlugin", "tutor", "zipPlugin" } }
+  },
 }
 
 require("lazy").setup(plugins, opts)
@@ -1763,14 +1787,20 @@ vim.keymap.set("n", "<Tab>", "<Plug>(cokeline-focus-next)", { desc = "Change to 
 vim.keymap.set("n", "<S-Tab>", "<Plug>(cokeline-focus-prev)", { desc = "Change to previous buffer", silent = true })
 for i = 1, 9 do
   vim.keymap.set("n", ("<leader>c%s"):format(i), ("<Plug>(cokeline-focus-%s)"):format(i), { desc = "Cambia al buffer x" })
-  vim.keymap.set("n", ("<leader>s%s"):format(i), ("<Plug>(cokeline-switch-%s)"):format(i), { desc = "Intercambia con el buffer x" })
+  vim.keymap.set("n", ("<leader>s%s"):format(i), ("<Plug>(cokeline-switch-%s)"):format(i),
+    { desc = "Intercambia con el buffer x" })
 end
 vim.keymap.set("n", "<leader>xx", "<cmd>TroubleToggle<cr>", { silent = true, noremap = true, desc = "Trouble Toggle" })
-vim.keymap.set("n", "<leader>xq", "<cmd>TroubleToggle quickfix<cr>", { silent = true, noremap = true, desc = "Trouble Quickfix" })
-vim.keymap.set("n", "<leader>xl", "<cmd>TroubleToggle loclist<cr>", { silent = true, noremap = true, desc = "Trouble Loclist" })
-vim.keymap.set("n", "<leader>xw", "<cmd>TroubleToggle workspace_diagnostics<cr>", { desc = "Trouble Workspace Diagnostics" })
-vim.keymap.set("n", "<leader>xd", "<cmd>TroubleToggle document_diagnostics<cr>", { desc = "Trouble Document Diagnostics" })
-vim.keymap.set("n", "gR", "<cmd>TroubleToggle lsp_references<cr>", { silent = true, noremap = true, desc = "Trouble LSP References" })
+vim.keymap.set("n", "<leader>xq", "<cmd>TroubleToggle quickfix<cr>",
+  { silent = true, noremap = true, desc = "Trouble Quickfix" })
+vim.keymap.set("n", "<leader>xl", "<cmd>TroubleToggle loclist<cr>",
+  { silent = true, noremap = true, desc = "Trouble Loclist" })
+vim.keymap.set("n", "<leader>xw", "<cmd>TroubleToggle workspace_diagnostics<cr>",
+  { desc = "Trouble Workspace Diagnostics" })
+vim.keymap.set("n", "<leader>xd", "<cmd>TroubleToggle document_diagnostics<cr>",
+  { desc = "Trouble Document Diagnostics" })
+vim.keymap.set("n", "gR", "<cmd>TroubleToggle lsp_references<cr>",
+  { silent = true, noremap = true, desc = "Trouble LSP References" })
 require("leap").add_default_mappings()
 vim.keymap.set({ "n", "v" }, "<leader>lp", function()
   local current_window = vim.fn.win_getid()
@@ -1778,13 +1808,17 @@ vim.keymap.set({ "n", "v" }, "<leader>lp", function()
   vim.cmd([[:normal zz]])
 end, { desc = "Leap bidirectionally" })
 vim.keymap.set("n", "<leader>la", function()
-  local focusable_window_on_tabpage = vim.tbl_filter(function(win) return vim.api.nvim_win_get_config(win).focusable end, vim.api.nvim_tabpage_list_wins(0))
+  local focusable_window_on_tabpage = vim.tbl_filter(function(win) return vim.api.nvim_win_get_config(win).focusable end,
+    vim.api.nvim_tabpage_list_wins(0))
   require("leap").leap({ target_windows = focusable_window_on_tabpage })
   vim.cmd([[:normal zz]])
 end, { desc = "Leap on all windows" })
 
 vim.keymap.set("n", "<leader>xth", "<cmd>TOhtml<CR>", { desc = "Exportar a HTML" })
-vim.keymap.set("n", "<esc>", function() require("notify").dismiss() vim.cmd.nohl() end, { })
+vim.keymap.set("n", "<esc>", function()
+  require("notify").dismiss()
+  vim.cmd.nohl()
+end, {})
 
 vim.keymap.set("n", "<leader>e", vim.cmd.Ex, { desc = "Ex", silent = true })
 -- Window splits and ?tabs?
@@ -1803,7 +1837,10 @@ vim.keymap.set("n", "<leader>il", "==", { desc = "Indent-line toggle" })
 --
 vim.keymap.set("x", "<leader>p", '"_dP', { desc = "Better paste :)" })
 vim.keymap.set({ "n", "v" }, "<leader>dd", [["_d]], { desc = "Better delete" })
-vim.keymap.set("n", "dd", function() if vim.fn.getline(".") == "" then return '"_dd' end return "dd" end, { expr = true })
+vim.keymap.set("n", "dd", function()
+  if vim.fn.getline(".") == "" then return '"_dd' end
+  return "dd"
+end, { expr = true })
 --
 -- Yank only to nvim clipboard
 vim.keymap.set({ "n", "v" }, "<leader>yy", [[""y]])

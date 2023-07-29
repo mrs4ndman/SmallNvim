@@ -53,6 +53,7 @@
   "nvim-cmp-ts-tag-close": { "branch": "main", "commit": "f1ad5333da4f2ac66aa3a324e5d3096b13fad5dc" },
   "nvim-cokeline": { "branch": "main", "commit": "c2842a51df781d357cd3408c411a7bec147b57ae" },
   "nvim-colorizer.lua": { "branch": "master", "commit": "dde3084106a70b9a79d48f426f6d6fec6fd203f7" },
+  "nvim-genghis": { "branch": "main", "commit": "9f04102a6f591c231dfb23b58ad3b49cd0a43c03" },
   "nvim-lastplace": { "branch": "main", "commit": "aeb0e0bd399288092729da89a9e51dda4ccbc9ec" },
   "nvim-lspconfig": { "branch": "master", "commit": "b6091272422bb0fbd729f7f5d17a56d37499c54f" },
   "nvim-navbuddy": { "branch": "master", "commit": "244a4cded6f2b568403684131d148048efe4e8af" },
